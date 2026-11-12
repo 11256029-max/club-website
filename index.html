@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你的名字 | Portfolio</title>
+<style>
+  :root {
+    --bg: #06080f;
+    --bg2: #0a0e1a;
+    --neon: #00f0ff;
+    --neon2: #b537f2;
+    --neon3: #ff2e97;
+    --text: #e8ecf4;
+    --muted: #8b93a7;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(0, 240, 255, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ===== 粒子背景 ===== */
+  #particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ===== 自訂游標 ===== */
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--neon);
+    box-shadow: 0 0 12px var(--neon);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0, 240, 255, 0.5);
+    transition: width .2s, height .2s, border-color .2s;
+  }
+  .cursor-ring.hover {
+    width: 56px; height: 56px;
+    border-color: var(--neon3);
+  }
+
+  /* ===== 導覽列 ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 6vw;
+    backdrop-filter: blur(12px);
+    background: rgba(6, 8, 15, 0.6);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, var(--neon), var(--neon3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  nav ul { display: flex; gap: 32px; list-style: none; }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    position: relative;
+    transition: color .3s;
+  }
+  nav a::after {
+    content: "";
+    position: absolute;
+    bottom: -6px; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, var(--neon), var(--neon3));
+    transition: width .3s;
+  }
+  nav a:hover { color: var(--text); }
+  nav a:hover::after { width: 100%; }
+
+  /* ===== Hero ===== */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 6vw;
+  }
+  .hero-badge {
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: var(--neon);
+    letter-spacing: 3px;
+    margin-bottom: 28px;
+    animation: fadeUp .8s .2s both;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.15;
+    animation: fadeUp .8s .4s both;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, var(--neon), var(--neon2), var(--neon3));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 4s linear infinite;
+  }
+  .typing {
+    margin-top: 20px;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--muted);
+    font-family: Consolas, monospace;
+    animation: fadeUp .8s .6s both;
+  }
+  .typing .caret {
+    color: var(--neon);
+    animation: blink 1s steps(1) infinite;
+  }
+  .hero-btns {
+    margin-top: 44px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp .8s .8s both;
+  }
+  .btn {
+    padding: 14px 36px;
+    border-radius: 999px;
+    font-size: 1rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .btn-primary {
+    color: #001318;
+    background: linear-gradient(90deg, var(--neon), #6ee7ff);
+    box-shadow: 0 0 24px rgba(0, 240, 255, 0.35);
+  }
+  .btn-ghost {
+    color: var(--text);
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .btn:hover { transform: translateY(-3px) scale(1.03); }
+  .btn-primary:hover { box-shadow: 0 0 44px rgba(0, 240, 255, 0.6); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 34px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    animation: bounce 2s infinite;
+  }
+
+  /* ===== 區塊通用 ===== */
+  section { position: relative; z-index: 1; padding: 110px 6vw; }
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .section-title span { color: var(--neon); }
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 64px;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .8s, transform .8s;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ===== 關於我 ===== */
+  .about-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .avatar-wrap {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 0 auto;
+  }
+  .avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d1322, #131b33);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    border: 2px solid var(--border);
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.15);
+  }
+  .avatar-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 2px dashed rgba(181, 55, 242, 0.5);
+    animation: spin 14s linear infinite;
+  }
+  .about-text p {
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 18px;
+  }
+  .about-text strong { color: var(--neon); }
+  .stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  .stat b {
+    display: block;
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--neon), var(--neon3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .stat span { color: var(--muted); font-size: 0.85rem; }
+
+  /* ===== 技能 ===== */
+  .skills {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 56px;
+  }
+  .skill .label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+  }
+  .label span:last-child { color: var(--neon); }
+  .bar {
+    height: 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+  .bar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--neon), var(--neon3));
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+    transition: width 1.4s cubic-bezier(.2,.8,.2,1);
+  }
+
+  /* ===== 專案卡片 ===== */
+  .projects {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+  }
+  .card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 30px;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 240, 255, 0.12), transparent 45%);
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  .card:hover {
+    border-color: var(--border);
+    box-shadow: 0 18px 50px rgba(0, 240, 255, 0.12);
+  }
+  .card:hover::before { opacity: 1; }
+  .card .icon {
+    font-size: 2.4rem;
+    margin-bottom: 18px;
+    filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.5));
+  }
+  .card h3 { font-size: 1.25rem; margin-bottom: 12px; }
+  .card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    color: var(--neon);
+    font-family: Consolas, monospace;
+  }
+  .card .link {
+    display: inline-block;
+    margin-top: 22px;
+    color: var(--neon3);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .card .link:hover { text-shadow: 0 0 14px var(--neon3); }
+
+  /* ===== 聯絡 ===== */
+  .contact-box {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 56px 40px;
+    box-shadow: 0 0 80px rgba(181, 55, 242, 0.12);
+  }
+  .contact-box h2 { font-size: 2rem; margin-bottom: 14px; }
+  .contact-box p { color: var(--muted); margin-bottom: 34px; }
+  .socials { display: flex; gap: 18px; justify-content: center; }
+  .socials a {
+    width: 52px; height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--card);
+    text-decoration: none;
+    font-size: 1.4rem;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+  }
+  .socials a:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon);
+    box-shadow: 0 0 24px rgba(0, 240, 255, 0.35);
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 36px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* ===== 動畫 ===== */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+  @keyframes shine { to { background-position: 200% center; } }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+  @media (max-width: 760px) {
+    nav ul { display: none; }
+    .about-grid { grid-template-columns: 1fr; text-align: center; }
+    .skills { grid-template-columns: 1fr; }
+    .stats { justify-content: center; }
+  }
+
+  @media (pointer: coarse) {
+    .cursor-dot, .cursor-ring { display: none; }
+    body { cursor: auto; }
+  }
+
+  /* ===== 🚇 地鐵跑酷小遊戲 ===== */
+  .game-launcher {
+    position: fixed;
+    right: 26px; bottom: 26px;
+    z-index: 950;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, #0d1526, #16203c);
+    color: var(--neon);
+    font-size: 1.7rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    animation: gPulse 2.4s infinite;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .game-launcher:hover { transform: scale(1.12) rotate(-6deg); }
+  @keyframes gPulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(0, 240, 255, .25); }
+    50% { box-shadow: 0 0 36px rgba(0, 240, 255, .55); }
+  }
+
+  .game-popup {
+    position: fixed;
+    right: 26px; bottom: 104px;
+    z-index: 951;
+    width: 380px;
+    background: rgba(10, 14, 26, .92);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .6), 0 0 46px rgba(0, 240, 255, .12);
+    transform-origin: bottom right;
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), opacity .25s;
+  }
+  .game-popup.open { transform: scale(1); opacity: 1; pointer-events: auto; }
+
+  .game-header { display: flex; justify-content: space-between; align-items: center; }
+  .game-header b { letter-spacing: 2px; font-size: 1rem; }
+  .game-close {
+    background: none; border: none;
+    color: var(--muted); font-size: 1rem;
+    cursor: pointer;
+    transition: color .2s, transform .2s;
+  }
+  .game-close:hover { color: var(--neon3); transform: rotate(90deg); }
+
+  .game-hud {
+    display: flex; justify-content: space-between;
+    font-family: Consolas, monospace;
+    font-size: .85rem;
+    color: var(--muted);
+    margin: 10px 2px;
+  }
+  .game-hud span { color: var(--neon); font-weight: 700; }
+
+  .game-stage {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  #gameCanvas { display: block; width: 100%; height: auto; background: #05070f; }
+
+  .game-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 13px;
+    padding: 12px;
+    text-align: center;
+    background: rgba(5, 7, 15, .78);
+    backdrop-filter: blur(3px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .game-overlay.show { opacity: 1; pointer-events: auto; }
+  .go-title { font-size: 1.25rem; font-weight: 800; }
+  .go-sub { color: var(--muted); font-size: .78rem; line-height: 1.6; }
+  .go-btn {
+    padding: 10px 30px;
+    border-radius: 999px; border: none;
+    font-weight: 700; font-size: .95rem;
+    color: #001318; cursor: pointer;
+    background: linear-gradient(90deg, var(--neon), #6ee7ff);
+    box-shadow: 0 0 20px rgba(0, 240, 255, .4);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .go-btn:hover { transform: scale(1.07); box-shadow: 0 0 36px rgba(0, 240, 255, .65); }
+
+  @media (max-width: 480px) {
+    .game-popup { right: 12px; left: 12px; width: auto; bottom: 100px; }
+  }
+
+  /* ===== 🥊 格鬥小遊戲 ===== */
+  .game-launcher.fight {
+    right: 104px;
+    color: var(--neon3);
+    border-color: rgba(255, 46, 151, .3);
+    animation-name: gPulsePink;
+  }
+  .game-launcher.fight:hover { transform: scale(1.12) rotate(6deg); }
+  @keyframes gPulsePink {
+    0%, 100% { box-shadow: 0 0 18px rgba(255, 46, 151, .25); }
+    50% { box-shadow: 0 0 36px rgba(255, 46, 151, .55); }
+  }
+  .fight-controls { display: flex; gap: 8px; margin-top: 10px; }
+  .fight-controls button {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: var(--card);
+    color: var(--text);
+    font-size: .85rem;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    transition: transform .15s, border-color .15s;
+  }
+  .fight-controls button:hover { border-color: var(--neon3); transform: translateY(-2px); }
+  .fight-controls button:active { transform: scale(.94); border-color: var(--neon3); }
+  .fight-controls button b { color: var(--neon3); }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<nav>
+  <div class="logo">&lt;DEV /&gt;</div>
+  <ul>
+    <li><a href="#about">關於我</a></li>
+    <li><a href="#skills">技能</a></li>
+    <li><a href="#projects">專案</a></li>
+    <li><a href="#contact">聯絡</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-badge">✦ WELCOME TO MY UNIVERSE ✦</div>
+  <h1>嗨，我是<span class="grad"> 你的名字</span><br>我打造 <span class="grad">數位體驗</span></h1>
+  <div class="typing"><span id="type"></span><span class="caret">▌</span></div>
+  <div class="hero-btns">
+    <a href="#projects" class="btn btn-primary">查看作品</a>
+    <a href="#contact" class="btn btn-ghost">聯絡我 →</a>
+  </div>
+  <div class="scroll-hint">SCROLL ▾</div>
+</header>
+
+<section id="about">
+  <h2 class="section-title reveal">關於<span>我</span></h2>
+  <p class="section-sub reveal">ABOUT ME</p>
+  <div class="about-grid">
+    <div class="avatar-wrap reveal">
+      <div class="avatar">🧑‍💻</div>
+    </div>
+    <div class="about-text reveal">
+      <p>我是一位熱愛技術的<strong>開發者 / 設計師</strong>，喜歡把創意變成現實，專注於網頁開發與互動設計。</p>
+      <p>相信<strong>好的設計</strong>來自對細節的堅持，每一次撰寫程式碼都是在雕琢一件作品。</p>
+      <div class="stats">
+        <div class="stat"><b data-count="3">0</b><span>年經驗</span></div>
+        <div class="stat"><b data-count="20">0</b><span>專案完成</span></div>
+        <div class="stat"><b data-count="99">0</b><span>咖啡杯 ☕</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="section-title reveal">技能<span>樹</span></h2>
+  <p class="section-sub reveal">MY SKILLS</p>
+  <div class="skills reveal">
+    <div class="skill"><div class="label"><span>HTML / CSS</span><span>95%</span></div><div class="bar"><i data-w="95"></i></div></div>
+    <div class="skill"><div class="label"><span>JavaScript</span><span>88%</span></div><div class="bar"><i data-w="88"></i></div></div>
+    <div class="skill"><div class="label"><span>Python</span><span>80%</span></div><div class="bar"><i data-w="80"></i></div></div>
+    <div class="skill"><div class="label"><span>UI / UX 設計</span><span>85%</span></div><div class="bar"><i data-w="85"></i></div></div>
+    <div class="skill"><div class="label"><span>React / Vue</span><span>78%</span></div><div class="bar"><i data-w="78"></i></div></div>
+    <div class="skill"><div class="label"><span>Git / 部署</span><span>90%</span></div><div class="bar"><i data-w="90"></i></div></div>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 class="section-title reveal">專案<span>作品</span></h2>
+  <p class="section-sub reveal">PROJECTS</p>
+  <div class="projects">
+    <div class="card reveal">
+      <div class="icon">🌐</div>
+      <h3>互動式網站</h3>
+      <p>結合動畫與資料視覺化的現代化網站，流暢的滾動體驗與精緻的微互動。</p>
+      <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span></div>
+      <a href="#" class="link">查看詳情 →</a>
+    </div>
+    <div class="card reveal">
+      <div class="icon">🎮</div>
+      <h3>網頁小遊戲</h3>
+      <p>純前端開發的休閒遊戲，含計分系統與動畫特效，可在手機上直接遊玩。</p>
+      <div class="tags"><span class="tag">Canvas</span><span class="tag">JavaScript</span></div>
+      <a href="#" class="link">查看詳情 →</a>
+    </div>
+    <div class="card reveal">
+      <div class="icon">📊</div>
+      <h3>資料儀表板</h3>
+      <p>即時資料視覺化儀表板，動態圖表與響應式佈局，一眼掌握所有關鍵數據。</p>
+      <div class="tags"><span class="tag">Vue</span><span class="tag">Charts</span></div>
+      <a href="#" class="link">查看詳情 →</a>
+    </div>
+    <div class="card reveal">
+      <div class="icon">🤖</div>
+      <h3>AI 小工具</h3>
+      <p>串接 AI API 的實用小工具，自動完成繁瑣任務，讓工作效率翻倍。</p>
+      <div class="tags"><span class="tag">Python</span><span class="tag">API</span></div>
+      <a href="#" class="link">查看詳情 →</a>
+    </div>
+    <div class="card reveal">
+      <div class="icon">📱</div>
+      <h3>響應式介面</h3>
+      <p>從手機到桌機都完美的 UI 設計，注重無障礙與使用體驗。</p>
+      <div class="tags"><span class="tag">Figma</span><span class="tag">RWD</span></div>
+      <a href="#" class="link">查看詳情 →</a>
+    </div>
+    <div class="card reveal">
+      <div class="icon">⚡</div>
+      <h3>開源貢獻</h3>
+      <p>參與開源專案，貢獻程式碼與文件，與全球開發者一起成長。</p>
+      <div class="tags"><span class="tag">Git</span><span class="tag">Open Source</span></div>
+      <a href="#" class="link">查看詳情 →</a>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-box reveal">
+    <h2>一起合作吧！🚀</h2>
+    <p>有任何想法或專案需求，歡迎隨時聯絡我</p>
+    <div class="socials">
+      <a href="mailto:you@example.com" title="Email">✉️</a>
+      <a href="https://github.com/" title="GitHub">🐙</a>
+      <a href="#" title="Instagram">📸</a>
+      <a href="#" title="Discord">💬</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 你的名字 · Crafted with 💜 &nbsp;|&nbsp; Designed &amp; Coded by Me</footer>
+
+<!-- 🚇 地鐵跑酷小遊戲 -->
+<button class="game-launcher" id="gameLauncher" title="地鐵跑酷小遊戲">🎮</button>
+<div class="game-popup" id="gamePopup">
+  <div class="game-header">
+    <b>🚇 地鐵跑酷</b>
+    <button class="game-close" id="gameClose">✕</button>
+  </div>
+  <div class="game-hud">
+    <div>🏆 最高分 <span id="gHigh">0</span></div>
+    <div>⭐ 分數 <span id="gScore">0</span></div>
+  </div>
+  <div class="game-stage">
+    <canvas id="gameCanvas" width="352" height="300"></canvas>
+    <div class="game-overlay" id="gameOverlay">
+      <div class="go-title" id="goTitle">地鐵跑酷 🚇</div>
+      <div class="go-sub" id="goSub">← → 切換車道 · ↑ 跳躍 · ↓ 下滑剷胎<br>跳過竿子 +150 · 跳過路障 +50 · 滑鏟過看板 · 收集金幣</div>
+      <button class="go-btn" id="goBtn">開始遊戲</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🥊 格鬥小遊戲 -->
+<button class="game-launcher fight" id="fightLauncher" title="格鬥小遊戲">🥊</button>
+<div class="game-popup" id="fightPopup">
+  <div class="game-header">
+    <b>🥊 格鬥對決</b>
+    <button class="game-close" id="fightClose">✕</button>
+  </div>
+  <div class="game-hud">
+    <div>🔥 連勝 <span id="fStreak">0</span></div>
+    <div>👑 最高連勝 <span id="fBest">0</span></div>
+  </div>
+  <div class="game-stage">
+    <canvas id="fightCanvas" width="352" height="300"></canvas>
+    <div class="game-overlay" id="fightOverlay">
+      <div class="go-title" id="fTitle">格鬥對決 🥊</div>
+      <div class="go-sub" id="fSub">A / D 移動 · J 出拳 · K 踢擊 · 按住 L 防禦<br>格擋可擋下 80% 傷害 · 打倒 CPU 累積連勝！</div>
+      <button class="go-btn" id="fBtn">開始戰鬥</button>
+    </div>
+  </div>
+  <div class="fight-controls">
+    <button id="cLeft">⬅ A</button>
+    <button id="cRight">D ➡</button>
+    <button id="cPunch"><b>👊 拳</b></button>
+    <button id="cKick"><b>🦵 踢</b></button>
+    <button id="cBlock">🛡 防</button>
+  </div>
+</div>
+
+<script>
+/* ===== 粒子背景 ===== */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let W, H, particles = [];
+const mouse = { x: -9999, y: -9999 };
+
+function resize() {
+  W = canvas.width = innerWidth;
+  H = canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+const COUNT = Math.min(90, Math.floor(innerWidth / 14));
+for (let i = 0; i < COUNT; i++) {
+  particles.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    vx: (Math.random() - .5) * .5,
+    vy: (Math.random() - .5) * .5,
+    r: Math.random() * 1.6 + .4,
+    hue: Math.random() > .5 ? "0, 240, 255" : "255, 46, 151"
+  });
+}
+
+addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+(function draw() {
+  ctx.clearRect(0, 0, W, H);
+  for (const p of particles) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > W) p.vx *= -1;
+    if (p.y < 0 || p.y > H) p.vy *= -1;
+
+    // 滑鼠吸引
+    const dx = mouse.x - p.x, dy = mouse.y - p.y;
+    const d = Math.hypot(dx, dy);
+    if (d < 160) { p.x += dx / d * .6; p.y += dy / d * .6; }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${p.hue}, .7)`;
+    ctx.fill();
+  }
+  // 連線
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const a = particles[i], b = particles[j];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 120) {
+        ctx.strokeStyle = `rgba(0, 240, 255, ${.12 * (1 - d / 120)})`;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* ===== 自訂游標 ===== */
+const dot = document.querySelector(".cursor-dot");
+const ring = document.querySelector(".cursor-ring");
+let rx = 0, ry = 0;
+addEventListener("mousemove", e => {
+  dot.style.left = e.clientX + "px";
+  dot.style.top = e.clientY + "px";
+});
+(function follow() {
+  rx += (mouse.x - rx) * .16;
+  ry += (mouse.y - ry) * .16;
+  ring.style.left = rx + "px";
+  ring.style.top = ry + "px";
+  requestAnimationFrame(follow);
+})();
+document.querySelectorAll("a, .card").forEach(el => {
+  el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+  el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+});
+
+/* ===== 打字機 ===== */
+const phrases = ["Web Developer 🌐", "UI/UX Designer 🎨", "Creative Coder ⚡", "終身學習者 📚"];
+const typeEl = document.getElementById("type");
+let pi = 0, ci = 0, deleting = false;
+(function type() {
+  const word = phrases[pi];
+  typeEl.textContent = word.slice(0, ci);
+  if (!deleting) {
+    if (ci++ < word.length) setTimeout(type, 70);
+    else { deleting = true; setTimeout(type, 1600); ci = word.length; }
+  } else {
+    if (ci-- > 0) setTimeout(type, 40);
+    else { deleting = false; pi = (pi + 1) % phrases.length; setTimeout(type, 400); ci = 0; }
+  }
+})();
+
+/* ===== 滾動顯示 ===== */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) {
+      en.target.classList.add("visible");
+      // 進度條
+      en.target.querySelectorAll?.(".bar i").forEach(bar => {
+        bar.style.width = bar.dataset.w + "%";
+      });
+      // 數字
+      en.target.querySelectorAll?.("[data-count]").forEach(n => {
+        const target = +n.dataset.count;
+        let cur = 0;
+        const step = Math.max(1, Math.ceil(target / 40));
+        const timer = setInterval(() => {
+          cur += step;
+          if (cur >= target) { cur = target; clearInterval(timer); }
+          n.textContent = cur + "+";
+        }, 30);
+      });
+      io.unobserve(en.target);
+    }
+  });
+}, { threshold: .15 });
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+/* ===== 卡片 3D 傾斜 + 光暈跟隨 ===== */
+document.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("mousemove", e => {
+    const r = card.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    card.style.setProperty("--mx", x + "px");
+    card.style.setProperty("--my", y + "px");
+    const rx = ((y / r.height) - .5) * -10;
+    const ry = ((x / r.width) - .5) * 10;
+    card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+  });
+  card.addEventListener("mouseleave", () => { card.style.transform = ""; });
+});
+
+/* ===== 🚇 地鐵跑酷小遊戲 ===== */
+const launcher = document.getElementById("gameLauncher"),
+      gamePopup = document.getElementById("gamePopup"),
+      gc = document.getElementById("gameCanvas"),
+      g2 = gc.getContext("2d"),
+      gameOverlay = document.getElementById("gameOverlay"),
+      goTitle = document.getElementById("goTitle"),
+      goSub = document.getElementById("goSub"),
+      goBtn = document.getElementById("goBtn"),
+      gScoreEl = document.getElementById("gScore"),
+      gHighEl = document.getElementById("gHigh");
+
+const GW = gc.width, GH = gc.height;
+const HORIZON = 56, GROUND = 266, MAXZ = 100, LANE_W = 96, PLAYER_Z = 12;
+let gState = "idle", rafId = null, lastT = 0;
+let gP, gObs, gSpeed, gDist, gCoins, gNextSpawn, gBonus, gFloats;
+let gBest = +(localStorage.getItem("subwayHigh") || 0);
+gHighEl.textContent = gBest;
+
+const TRAIN_COLORS = [["#ff4d6d", "#c9184a"], ["#4cc9f0", "#3a0ca3"], ["#f8961e", "#9d0208"]];
+const proj = z => {
+  const q = 1 - z / MAXZ;
+  return { y: HORIZON + (GROUND - HORIZON) * q, s: 0.28 + 0.72 * q };
+};
+
+function gReset() {
+  gP = { lane: 1, x: 0, yOff: 0, vy: 0, air: false, slideT: 0 };
+  gObs = []; gSpeed = 62; gDist = 0; gCoins = 0; gNextSpawn = 40;
+  gBonus = 0; gFloats = [];
+  gScoreEl.textContent = "0";
+}
+function gShow(t, s, b) {
+  goTitle.textContent = t; goSub.innerHTML = s; goBtn.textContent = b;
+  gameOverlay.classList.add("show");
+}
+function gStart() {
+  gReset();
+  gameOverlay.classList.remove("show");
+  gState = "play";
+  lastT = performance.now();
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(gLoop);
+}
+function gOver() {
+  gState = "over";
+  cancelAnimationFrame(rafId);
+  const sc = Math.floor(gDist / 10) + gCoins * 50;
+  if (sc > gBest) { gBest = sc; localStorage.setItem("subwayHigh", gBest); gHighEl.textContent = gBest; }
+  gShow(`遊戲結束 💥 得分 ${sc}`, `🏆 最高分 ${gBest}<br>按 ↑ / 空白鍵 或點擊按鈕再來一次`, "再挑戰一次");
+  gDraw();
+}
+function gSpawn() {
+  const lane = Math.floor(Math.random() * 3);
+  const r = Math.random();
+
+  // 🎯 竿子：橫跨全跑道，跳過 +150 分
+  if (r < 0.1) {
+    gObs.push({ type: "pole", lane: 1, z: MAXZ, done: false });
+    return 90;
+  }
+  // 🪧 懸掛看板：必須滑鏟通過
+  if (r < 0.18) {
+    gObs.push({ type: "gate", lane: 1, z: MAXZ });
+    return 90;
+  }
+
+  if (r < 0.5) {
+    const c = TRAIN_COLORS[Math.floor(Math.random() * 3)];
+    gObs.push({ type: "train", lane, z: MAXZ, w: 62, h: 58, c1: c[0], c2: c[1] });
+  } else if (r < 0.82) {
+    gObs.push({ type: "barrier", lane, z: MAXZ, w: 54, h: 22, done: false });
+  } else {
+    const cl = Math.floor(Math.random() * 3);
+    for (let i = 0; i < 5; i++)
+      gObs.push({ type: "coin", lane: cl, z: MAXZ + i * 9, r: 9 });
+  }
+  if (gSpeed > 85 && Math.random() < 0.3) {
+    const l2 = (lane + 1 + Math.floor(Math.random() * 2)) % 3;
+    const c = TRAIN_COLORS[Math.floor(Math.random() * 3)];
+    gObs.push({ type: "train", lane: l2, z: MAXZ + 25, w: 62, h: 58, c1: c[0], c2: c[1] });
+  }
+  return 0;
+}
+function gUpdate(dt) {
+  gSpeed = Math.min(150, gSpeed + dt * 3);
+  gDist += gSpeed * dt;
+  if (gDist > gNextSpawn) {
+    const extra = gSpawn();
+    gNextSpawn = gDist + 100 + Math.random() * 110 + extra;
+  }
+
+  // 玩家移動
+  const target = (gP.lane - 1) * LANE_W;
+  gP.x += (target - gP.x) * Math.min(1, dt * 14);
+  if (gP.slideT > 0) gP.slideT -= dt;
+  if (gP.air) {
+    gP.vy -= 760 * dt;
+    gP.yOff += gP.vy * dt;
+    if (gP.yOff <= 0) { gP.yOff = 0; gP.air = false; }
+  }
+
+  // 障礙物前進
+  for (const o of gObs) o.z -= gSpeed * dt;
+  gObs = gObs.filter(o => o.z > -8);
+
+  // 🎯 竿子 / 路障成功跳過 → 加分特效
+  for (const o of gObs) {
+    if (o.type === "pole" && !o.done && o.z < PLAYER_Z - 9) {
+      o.done = true;
+      gBonus += 150;
+      gFloats.push({ txt: "竿子 +150 ⭐", t: 1 });
+    }
+    // 跳過路障：通過時還在同一車道 = 真的從上面跳過去
+    if (o.type === "barrier" && !o.done && o.z < PLAYER_Z - 6 && o.lane === gP.lane) {
+      o.done = true;
+      gBonus += 50;
+      gFloats.push({ txt: "路障 +50 ⭐", t: 0.8 });
+    }
+  }
+
+  // 浮動文字更新
+  for (let i = gFloats.length - 1; i >= 0; i--) {
+    gFloats[i].t -= dt;
+    if (gFloats[i].t <= 0) gFloats.splice(i, 1);
+  }
+
+  // 碰撞判定
+  for (let i = gObs.length - 1; i >= 0; i--) {
+    const o = gObs[i];
+    if ((o.type === "train" || o.type === "barrier") && o.lane !== gP.lane) continue;
+    const zw = o.type === "train" ? 9 : o.type === "pole" || o.type === "gate" ? 7 : 5;
+    if (Math.abs(o.z - PLAYER_Z) > zw) continue;
+    if (o.type === "coin") {
+      if (o.lane === gP.lane && gP.yOff < 34) { gObs.splice(i, 1); gCoins++; }
+    } else if (o.type === "pole") {
+      if (gP.yOff < 26) return gOver();          // 竿子必須跳過
+    } else if (o.type === "gate") {
+      if (gP.slideT <= 0) return gOver();        // 看板必須滑鏟通過
+    } else if (o.type === "barrier") {
+      if (gP.yOff < 20) return gOver();
+    } else if (gP.yOff < 60) return gOver();
+  }
+}
+function gRoundRect(x, y, w, h, r) {
+  g2.beginPath();
+  g2.moveTo(x + r, y);
+  g2.arcTo(x + w, y, x + w, y + h, r);
+  g2.arcTo(x + w, y + h, x, y + h, r);
+  g2.arcTo(x, y + h, x, y, r);
+  g2.arcTo(x, y, x + w, y, r);
+  g2.closePath();
+}
+function gDraw() {
+  g2.clearRect(0, 0, GW, GH);
+
+  // 天空
+  const sky = g2.createLinearGradient(0, 0, 0, HORIZON + 30);
+  sky.addColorStop(0, "#05070f");
+  sky.addColorStop(1, "#1a1f4d");
+  g2.fillStyle = sky;
+  g2.fillRect(0, 0, GW, HORIZON + 30);
+
+  // 地平線光暈
+  const glow = g2.createRadialGradient(GW / 2, HORIZON, 4, GW / 2, HORIZON, 130);
+  glow.addColorStop(0, "rgba(0,240,255,.5)");
+  glow.addColorStop(1, "rgba(0,240,255,0)");
+  g2.fillStyle = glow;
+  g2.fillRect(0, HORIZON - 70, GW, 140);
+
+  // 跑道
+  const farW = LANE_W * 3 * 0.26, nearW = LANE_W * 3 * 0.98;
+  g2.beginPath();
+  g2.moveTo(GW / 2 - farW / 2, HORIZON);
+  g2.lineTo(GW / 2 + farW / 2, HORIZON);
+  g2.lineTo(GW / 2 + nearW / 2, GROUND + 26);
+  g2.lineTo(GW / 2 - nearW / 2, GROUND + 26);
+  g2.closePath();
+  const road = g2.createLinearGradient(0, HORIZON, 0, GROUND);
+  road.addColorStop(0, "#10162e");
+  road.addColorStop(1, "#1b2244");
+  g2.fillStyle = road;
+  g2.fill();
+
+  // 軌枕（向玩家移動）
+  for (let i = 0; i < 15; i++) {
+    const z = i * 7 - (gDist % 7);
+    if (z < 2) continue;
+    const { y, s } = proj(z);
+    g2.strokeStyle = `rgba(120,160,255,${0.06 + 0.1 * (1 - z / MAXZ)})`;
+    g2.lineWidth = 2;
+    g2.beginPath();
+    g2.moveTo(GW / 2 - LANE_W * 1.5 * s, y);
+    g2.lineTo(GW / 2 + LANE_W * 1.5 * s, y);
+    g2.stroke();
+  }
+
+  // 車道分隔霓虹線
+  [-0.5, 0.5].forEach(off => {
+    g2.beginPath();
+    g2.moveTo(GW / 2 + off * LANE_W * 0.26, HORIZON);
+    g2.lineTo(GW / 2 + off * LANE_W * 0.98, GROUND);
+    g2.strokeStyle = "rgba(0,240,255,.28)";
+    g2.lineWidth = 1.5;
+    g2.stroke();
+  });
+
+  // 障礙物（遠的先畫）
+  const solid = gObs.filter(o => o.type !== "coin").sort((a, b) => b.z - a.z);
+  for (const o of solid) {
+    if (o.z < -4 || o.z > MAXZ) continue;
+    const { y, s } = proj(o.z);
+    const cx = GW / 2 + (o.lane - 1) * LANE_W * s;
+    const w = o.w * s, h = o.h * s;
+    g2.save();
+    if (o.type === "pole") {
+      // 🎯 竿子：橫跨全跑道的紅白柵欄
+      const w = LANE_W * 3 * s * 0.94;
+      g2.fillStyle = "#8d99ae";
+      g2.fillRect(cx - w / 2 - 3 * s, y - 30 * s, 6 * s, 30 * s);
+      g2.fillRect(cx + w / 2 - 3 * s, y - 30 * s, 6 * s, 30 * s);
+      g2.shadowColor = "rgba(255,255,255,.5)";
+      g2.shadowBlur = 10 * s;
+      const seg = w / 6;
+      for (let k2 = 0; k2 < 6; k2++) {
+        g2.fillStyle = k2 % 2 ? "#e5383b" : "#f1faee";
+        g2.fillRect(cx - w / 2 + k2 * seg, y - 26 * s, seg + 0.5, 9 * s);
+      }
+      g2.restore();
+      continue;
+    }
+    if (o.type === "gate") {
+      // 🪧 懸掛看板：必須滑鏟從下方通過
+      const w = LANE_W * 3 * s * 0.98;
+      g2.fillStyle = "#2b2d42";
+      g2.fillRect(cx - w / 2 - 4 * s, y - 78 * s, 8 * s, 78 * s);
+      g2.fillRect(cx + w / 2 - 4 * s, y - 78 * s, 8 * s, 78 * s);
+      g2.shadowColor = "rgba(255,183,3,.55)";
+      g2.shadowBlur = 12 * s;
+      g2.fillStyle = "#ffb703";
+      gRoundRect(cx - w / 2, y - 62 * s, w, 22 * s, 3 * s);
+      g2.fill();
+      g2.shadowBlur = 0;
+      g2.fillStyle = "#0a0e1a";
+      for (let k2 = 0; k2 < 6; k2++) {
+        g2.save();
+        g2.translate(cx - w / 2 + (k2 + 0.5) * w / 6, y - 51 * s);
+        g2.rotate(Math.PI / 4);
+        g2.fillRect(-5 * s, -5 * s, 10 * s, 10 * s);
+        g2.restore();
+      }
+      g2.restore();
+      continue;
+    }
+    if (o.type === "train") {
+      g2.shadowColor = "rgba(255,77,109,.55)";
+      g2.shadowBlur = 14 * s;
+      const grd = g2.createLinearGradient(cx - w / 2, 0, cx + w / 2, 0);
+      grd.addColorStop(0, o.c1); grd.addColorStop(1, o.c2);
+      g2.fillStyle = grd;
+      gRoundRect(cx - w / 2, y - h, w, h, 5 * s);
+      g2.fill();
+      g2.shadowBlur = 0;
+      g2.fillStyle = "rgba(190,240,255,.85)";
+      g2.fillRect(cx - w * 0.28, y - h * 0.78, w * 0.56, h * 0.28);
+    } else {
+      g2.shadowColor = "rgba(255,183,3,.55)";
+      g2.shadowBlur = 12 * s;
+      g2.fillStyle = "#ffb703";
+      gRoundRect(cx - w / 2, y - h, w, h, 3 * s);
+      g2.fill();
+      g2.shadowBlur = 0;
+      g2.fillStyle = "#0a0e1a";
+      for (let k = 0; k < 3; k++)
+        g2.fillRect(cx - w / 2 + (k + 0.5) * w / 3 - 3 * s, y - h, 6 * s, h);
+    }
+    g2.restore();
+  }
+
+  // 金幣
+  for (const o of gObs) {
+    if (o.type !== "coin" || o.z < -2 || o.z > MAXZ) continue;
+    const { y, s } = proj(o.z);
+    const cx = GW / 2 + (o.lane - 1) * LANE_W * s;
+    const cy = y - 22 * s + Math.sin(gDist * 0.12 + o.z * 0.3) * 4 * s;
+    g2.save();
+    g2.shadowColor = "rgba(255,215,0,.9)";
+    g2.shadowBlur = 12 * s;
+    g2.fillStyle = "#ffd60a";
+    g2.beginPath();
+    g2.arc(cx, cy, o.r * s, 0, Math.PI * 2);
+    g2.fill();
+    g2.restore();
+  }
+
+  // 玩家影子
+  const pp = proj(PLAYER_Z);
+  const px = GW / 2 + gP.x * pp.s;
+  const py = pp.y - gP.yOff * pp.s;
+  g2.fillStyle = "rgba(0,0,0,.45)";
+  g2.beginPath();
+  g2.ellipse(px, pp.y + 4, 16 * pp.s, 5 * pp.s, 0, 0, Math.PI * 2);
+  g2.fill();
+
+  // 玩家（滑鏟 / 跳躍 / 跑步 三種姿勢）
+  g2.save();
+  g2.shadowColor = "rgba(0,240,255,.7)";
+  g2.shadowBlur = 16;
+  g2.font = `${Math.round(38 * pp.s)}px serif`;
+  g2.textAlign = "center";
+  g2.fillText(gP.slideT > 0 ? "🧎" : gP.air ? "🤸" : "🏃", px, py + 6);
+  g2.restore();
+
+  // 浮動加分文字
+  for (const f of gFloats) {
+    g2.save();
+    g2.globalAlpha = Math.min(1, f.t);
+    g2.font = "bold 15px Consolas, monospace";
+    g2.textAlign = "center";
+    g2.fillStyle = "#ffd60a";
+    g2.shadowColor = "rgba(255,215,0,.8)";
+    g2.shadowBlur = 10;
+    g2.fillText(f.txt, px, pp.y - 84 - (1 - f.t) * 36);
+    g2.restore();
+  }
+}
+function gLoop(t) {
+  const dt = Math.min(0.033, (t - lastT) / 1000);
+  lastT = t;
+  gUpdate(dt);
+  gScoreEl.textContent = Math.floor(gDist / 10) + gCoins * 50 + gBonus;
+  if (gState === "play") { gDraw(); rafId = requestAnimationFrame(gLoop); }
+}
+
+// 開關遊戲視窗
+launcher.addEventListener("click", () => {
+  if (gamePopup.classList.contains("open")) {
+    gamePopup.classList.remove("open");
+    cancelAnimationFrame(rafId);
+    gState = "idle";
+  } else {
+    fPopup.classList.remove("open");
+    cancelAnimationFrame(fRaf);
+    fState = "idle";
+    gamePopup.classList.add("open");
+    gReset();
+    gState = "idle";
+    gShow("地鐵跑酷 🚇", "← → 切換車道 · ↑ 跳躍 · ↓ 下滑剷胎<br>跳過竿子 +150 · 跳過路障 +50 · 滑鏟過看板 · 收集金幣", "開始遊戲");
+  }
+});
+document.getElementById("gameClose").addEventListener("click", () => {
+  gamePopup.classList.remove("open");
+  cancelAnimationFrame(rafId);
+  gState = "idle";
+});
+goBtn.addEventListener("click", gStart);
+
+// 操作：鍵盤
+function gMove(d) { if (gState === "play") gP.lane = Math.max(0, Math.min(2, gP.lane + d)); }
+function gJump() { if (gState === "play" && !gP.air) { gP.air = true; gP.vy = 300; } }
+function gSlide() {
+  if (gState !== "play") return;
+  if (gP.air) gP.vy = -560;                       // 空中下壓 → 快速落地
+  else if (gP.slideT <= 0) { gP.slideT = 0.55; gP.yOff = 0; }
+}
+document.addEventListener("keydown", e => {
+  if (!gamePopup.classList.contains("open")) return;
+  const k = e.key;
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " "].includes(k)) e.preventDefault();
+  if (k === "ArrowLeft" || k === "a" || k === "A") gMove(-1);
+  else if (k === "ArrowRight" || k === "d" || k === "D") gMove(1);
+  else if (k === "ArrowUp" || k === " " || k === "w" || k === "W") {
+    if (gState === "play") gJump(); else gStart();
+  }
+  else if (k === "ArrowDown" || k === "s" || k === "S") gSlide();
+});
+
+// 操作：手機滑動 / 點擊
+let gTx = 0, gTy = 0;
+gc.addEventListener("touchstart", e => {
+  gTx = e.touches[0].clientX; gTy = e.touches[0].clientY;
+}, { passive: true });
+gc.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - gTx;
+  const dy = e.changedTouches[0].clientY - gTy;
+  if (Math.abs(dx) > Math.abs(dy)) { if (Math.abs(dx) > 24) gMove(dx > 0 ? 1 : -1); }
+  else if (dy < -24) gJump();
+  else if (dy > 24) gSlide();
+}, { passive: true });
+gc.addEventListener("click", () => {
+  if (gState === "play") gJump(); else gStart();
+});
+
+// 自訂游標 hover 效果
+[launcher, goBtn, document.getElementById("gameClose")].forEach(el => {
+  el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+  el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+});
+
+/* ===== 🥊 格鬥小遊戲 ===== */
+const fLauncher = document.getElementById("fightLauncher"),
+      fPopup = document.getElementById("fightPopup"),
+      fc = document.getElementById("fightCanvas"),
+      f2 = fc.getContext("2d"),
+      fOverlay = document.getElementById("fightOverlay"),
+      fTitle = document.getElementById("fTitle"),
+      fSub = document.getElementById("fSub"),
+      fBtn = document.getElementById("fBtn"),
+      fStreakEl = document.getElementById("fStreak"),
+      fBestEl = document.getElementById("fBest");
+
+const FW = fc.width, FH = fc.height, FLOOR = 246, FMINX = 34;
+let fState = "idle", fRaf = null, fLast = 0;
+let fKeys = { left: false, right: false, block: false };
+let fStreak = 0;
+let fBestF = +(localStorage.getItem("fightBest") || 0);
+fBestEl.textContent = fBestF;
+
+let fP, fE, fFx, fShake;
+function fReset() {
+  fP = { x: 90, hp: 100, face: 1, atk: 0, atkT: 0, atkHit: false, cd: 0, hitT: 0, block: false };
+  fE = { x: 262, hp: 100, face: -1, atk: 0, atkT: 0, atkHit: false, cd: 0.8, hitT: 0, block: false, blockT: 0, think: 0.5 };
+  fFx = []; fShake = 0;
+}
+function fShow(t, s, b) {
+  fTitle.textContent = t; fSub.innerHTML = s; fBtn.textContent = b;
+  fOverlay.classList.add("show");
+}
+function fStart() {
+  fReset();
+  fOverlay.classList.remove("show");
+  fState = "play";
+  fLast = performance.now();
+  cancelAnimationFrame(fRaf);
+  fRaf = requestAnimationFrame(fLoop);
+}
+function fStartAtk(f, type) {
+  if (fState !== "play" || f.atk > 0 || f.cd > 0) return;
+  f.atk = type; f.atkHit = false;
+  f.atkT = type === 1 ? 0.24 : 0.36;
+  f.cd = type === 1 ? 0.4 : 0.66;
+  // CPU 有機率預判格擋玩家的攻擊
+  if (f === fP && Math.abs(fE.x - fP.x) < 84 && Math.random() < 0.2) fE.blockT = 0.32;
+}
+function fDoHit(attacker) {
+  const def = attacker === fP ? fE : fP;
+  const reach = attacker.atk === 1 ? 58 : 76;
+  if (Math.abs(def.x - attacker.x) > reach) return;
+  let d = (attacker.atk === 1 ? 7 : 13) + Math.random() * 4;
+  let txt = "-" + Math.round(d);
+  if (def.block) {
+    d *= 0.18;
+    txt = "格擋 " + Math.max(1, Math.round(d));
+  }
+  def.hp = Math.max(0, def.hp - d);
+  def.hitT = 0.25;
+  def.x += (def.x > attacker.x ? 1 : -1) * (def.block ? 7 : 18);
+  fFx.push({ txt, x: def.x, y: FLOOR - 72, t: 0.8, c: def.block ? "#8d99ae" : "#ff2e97" });
+  if (!def.block) fShake = attacker.atk === 2 ? 0.28 : 0.14;
+}
+function fEnd() {
+  fState = "over";
+  cancelAnimationFrame(fRaf);
+  const win = fE.hp <= 0 && fP.hp > 0;
+  if (win) {
+    fStreak++;
+    if (fStreak > fBestF) {
+      fBestF = fStreak;
+      localStorage.setItem("fightBest", fBestF);
+      fBestEl.textContent = fBestF;
+    }
+    fStreakEl.textContent = fStreak;
+    fShow(`勝利！🏆 連勝 ${fStreak}`, "CPU 被擊倒了！<br>連勝越多，CPU 會越強！", "再戰一場");
+  } else {
+    fStreak = 0;
+    fStreakEl.textContent = 0;
+    fShow("敗北 💀", "被 CPU 擊倒了…<br>試著多善用 🛡 防禦反擊！", "再戰一場");
+  }
+  fDraw();
+}
+function fUpdate(dt) {
+  fShake = Math.max(0, fShake - dt);
+
+  // 玩家移動
+  if (fKeys.left) fP.x -= 150 * dt;
+  if (fKeys.right) fP.x += 150 * dt;
+
+  // 攻擊 / 命中 / 冷卻計時
+  for (const f of [fP, fE]) {
+    if (f.cd > 0) f.cd -= dt;
+    if (f.hitT > 0) f.hitT -= dt;
+    if (f.atk > 0) {
+      const dur = f.atk === 1 ? 0.24 : 0.36;
+      f.atkT -= dt;
+      if (!f.atkHit && f.atkT < dur * 0.5) { f.atkHit = true; fDoHit(f); }
+      if (f.atkT <= 0) f.atk = 0;
+    }
+  }
+  // 防禦狀態
+  fP.block = !!fKeys.block && fP.atk === 0;
+  if (fE.blockT > 0) { fE.blockT -= dt; fE.block = true; } else fE.block = false;
+
+  // 🤖 CPU AI（連勝越高越快）
+  const dx = fE.x - fP.x;
+  const spd = 118 + Math.min(46, fStreak * 9);
+  if (fE.atk === 0 && fE.cd <= 0) {
+    fE.think -= dt;
+    if (Math.abs(dx) > 64) fE.x -= Math.sign(dx) * spd * dt;
+    else if (fE.think <= 0) {
+      const r = Math.random();
+      if (r < 0.12) fE.blockT = 0.4;
+      else fStartAtk(fE, r < 0.6 ? 1 : 2);
+      fE.think = 0.14 + Math.random() * 0.3;
+    }
+  }
+  // 面向對手
+  fP.face = Math.sign(fE.x - fP.x) || 1;
+  fE.face = -fP.face;
+
+  // 邊界 + 不穿越
+  fP.x = Math.max(FMINX, Math.min(FW - FMINX, fP.x));
+  fE.x = Math.max(FMINX, Math.min(FW - FMINX, fE.x));
+  if (Math.abs(fE.x - fP.x) < 46) {
+    const mid = (fP.x + fE.x) / 2;
+    fP.x = Math.max(FMINX, mid - 23);
+    fE.x = Math.min(FW - FMINX, fP.x + 46);
+  }
+
+  // 浮動文字
+  for (let i = fFx.length - 1; i >= 0; i--) {
+    fFx[i].t -= dt;
+    if (fFx[i].t <= 0) fFx.splice(i, 1);
+  }
+
+  // 勝負判定
+  if (fP.hp <= 0 || fE.hp <= 0) fEnd();
+}
+function fRR(x, y, w, h, r) {
+  f2.beginPath();
+  f2.moveTo(x + r, y);
+  f2.arcTo(x + w, y, x + w, y + h, r);
+  f2.arcTo(x + w, y + h, x, y + h, r);
+  f2.arcTo(x, y + h, x, y, r);
+  f2.arcTo(x, y, x + w, y, r);
+  f2.closePath();
+}
+function fHpBar(hp, x, label, right) {
+  const w = 138, h = 11, y = 16;
+  const xx = right ? x - w : x;
+  f2.fillStyle = "rgba(255,255,255,.08)";
+  fRR(xx, y, w, h, 5); f2.fill();
+  const pw = w * Math.max(0, hp) / 100;
+  if (pw > 0.5) {
+    const c = f2.createLinearGradient(xx, 0, xx + w, 0);
+    if (right) { c.addColorStop(0, "#ff2e97"); c.addColorStop(1, "#ff9ecb"); }
+    else { c.addColorStop(0, "#00f0ff"); c.addColorStop(1, "#6ee7ff"); }
+    f2.fillStyle = c;
+    fRR(right ? xx + w - pw : xx, y, pw, h, 5); f2.fill();
+  }
+  f2.strokeStyle = "rgba(255,255,255,.25)";
+  f2.lineWidth = 1;
+  fRR(xx, y, w, h, 5); f2.stroke();
+  f2.font = "12px Consolas, monospace";
+  f2.fillStyle = "#e8ecf4";
+  f2.textAlign = right ? "right" : "left";
+  f2.fillText(label, x, y - 4);
+}
+function fDraw() {
+  f2.clearRect(0, 0, FW, FH);
+  f2.save();
+  if (fShake > 0) f2.translate((Math.random() - .5) * 9, 0);
+
+  // 背景
+  const bg = f2.createLinearGradient(0, 0, 0, FH);
+  bg.addColorStop(0, "#12061a");
+  bg.addColorStop(1, "#1f0a2e");
+  f2.fillStyle = bg;
+  f2.fillRect(0, 0, FW, FH);
+
+  // 聚光燈
+  const spot = f2.createRadialGradient(FW / 2, FLOOR, 12, FW / 2, FLOOR, 165);
+  spot.addColorStop(0, "rgba(255,46,151,.18)");
+  spot.addColorStop(1, "rgba(255,46,151,0)");
+  f2.fillStyle = spot;
+  f2.fillRect(0, 0, FW, FH);
+
+  // 拳擊台
+  f2.fillStyle = "#241035";
+  f2.beginPath();
+  f2.ellipse(FW / 2, FLOOR + 24, 172, 36, 0, 0, Math.PI * 2);
+  f2.fill();
+  f2.strokeStyle = "rgba(255,46,151,.35)";
+  f2.lineWidth = 2;
+  f2.stroke();
+
+  // 血條
+  fHpBar(fP.hp, 12, "🥋 你", false);
+  fHpBar(fE.hp, FW - 12, "🤖 CPU", true);
+
+  // 角色 + 攻擊 / 防禦 / 受擊特效
+  const chars = [
+    { f: fP, emoji: "🥋", col: "0,240,255" },
+    { f: fE, emoji: "👾", col: "255,46,151" }
+  ];
+  for (const { f, emoji, col } of chars) {
+    // 受擊閃光
+    if (f.hitT > 0) {
+      f2.fillStyle = `rgba(255,255,255,${f.hitT * 1.6})`;
+      f2.beginPath();
+      f2.arc(f.x, FLOOR - 34, 30, 0, Math.PI * 2);
+      f2.fill();
+    }
+    // 角色本體
+    f2.save();
+    f2.shadowColor = `rgba(${col},.7)`;
+    f2.shadowBlur = 14;
+    f2.font = "40px serif";
+    f2.textAlign = "center";
+    f2.fillText(emoji, f.x, FLOOR - 8);
+    f2.restore();
+    // 攻擊動作
+    if (f.atk > 0) {
+      const dur = f.atk === 1 ? 0.24 : 0.36;
+      const p = 1 - f.atkT / dur;
+      const ext = 28 + p * 20;
+      f2.font = "24px serif";
+      f2.fillText(f.atk === 1 ? "✊" : "🦵", f.x + f.face * ext, FLOOR - (f.atk === 1 ? 38 : 24));
+    }
+    // 防禦護盾
+    if (f.block) {
+      f2.save();
+      f2.shadowColor = "rgba(141,153,175,.8)";
+      f2.shadowBlur = 12;
+      f2.font = "22px serif";
+      f2.fillText("🛡", f.x + f.face * 28, FLOOR - 32);
+      f2.restore();
+    }
+  }
+
+  // 浮動傷害文字
+  for (const e of fFx) {
+    f2.save();
+    f2.globalAlpha = Math.min(1, e.t);
+    f2.font = "bold 15px Consolas, monospace";
+    f2.textAlign = "center";
+    f2.fillStyle = e.c;
+    f2.shadowColor = e.c;
+    f2.shadowBlur = 10;
+    f2.fillText(e.txt, e.x, e.y - (0.8 - e.t) * 40);
+    f2.restore();
+  }
+  f2.restore();
+}
+function fLoop(t) {
+  const dt = Math.min(0.033, (t - fLast) / 1000);
+  fLast = t;
+  fUpdate(dt);
+  if (fState === "play") { fDraw(); fRaf = requestAnimationFrame(fLoop); }
+}
+
+// 開關格鬥視窗（開啟時自動收起跑酷）
+fLauncher.addEventListener("click", () => {
+  if (fPopup.classList.contains("open")) {
+    fPopup.classList.remove("open");
+    cancelAnimationFrame(fRaf);
+    fState = "idle";
+  } else {
+    gamePopup.classList.remove("open");
+    cancelAnimationFrame(rafId);
+    gState = "idle";
+    fPopup.classList.add("open");
+    fReset();
+    fState = "idle";
+    fShow("格鬥對決 🥊", "A / D 移動 · J 出拳 · K 踢擊 · 按住 L 防禦<br>連勝越多 CPU 越強 · 點下方按鈕也能操作", "開始戰鬥");
+  }
+});
+document.getElementById("fightClose").addEventListener("click", () => {
+  fPopup.classList.remove("open");
+  cancelAnimationFrame(fRaf);
+  fState = "idle";
+});
+fBtn.addEventListener("click", fStart);
+fc.addEventListener("click", () => { if (fState !== "play") fStart(); });
+
+// 操作：鍵盤
+document.addEventListener("keydown", e => {
+  if (!fPopup.classList.contains("open")) return;
+  const k = e.key.toLowerCase();
+  if (k === "arrowleft" || k === "arrowright") e.preventDefault();
+  if (k === "a" || k === "arrowleft") fKeys.left = true;
+  else if (k === "d" || k === "arrowright") fKeys.right = true;
+  else if (k === "j") { if (!e.repeat) fStartAtk(fP, 1); }
+  else if (k === "k") { if (!e.repeat) fStartAtk(fP, 2); }
+  else if (k === "l") fKeys.block = true;
+  else if (k === " " && fState !== "play") { e.preventDefault(); fStart(); }
+});
+document.addEventListener("keyup", e => {
+  const k = e.key.toLowerCase();
+  if (k === "a" || k === "arrowleft") fKeys.left = false;
+  else if (k === "d" || k === "arrowright") fKeys.right = false;
+  else if (k === "l") fKeys.block = false;
+});
+
+// 操作：畫面按鈕（手機可用）
+const fBind = (id, down, up) => {
+  const el = document.getElementById(id);
+  el.addEventListener("pointerdown", e => { e.preventDefault(); down(); });
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointerleave", up);
+};
+fBind("cLeft", () => fKeys.left = true, () => fKeys.left = false);
+fBind("cRight", () => fKeys.right = true, () => fKeys.right = false);
+fBind("cPunch", () => fStartAtk(fP, 1), () => {});
+fBind("cKick", () => fStartAtk(fP, 2), () => {});
+fBind("cBlock", () => fKeys.block = true, () => fKeys.block = false);
+
+// 自訂游標 hover 效果
+[fLauncher, fBtn, document.getElementById("fightClose")].forEach(el => {
+  el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+  el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+});
+</script>
+</body>
+</html>
